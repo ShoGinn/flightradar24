@@ -16,7 +16,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates iputils-ping dnsutils
 
-COPY fr24dl.sh .
+COPY fr24dl.sh /usr/bin/fr24dl.sh
 
 RUN fr24dl.sh ${FR24FEED_ARM_VERSION} ${FR24FEED_ARM_HASH} ${FR24FEED_AMD_VERSION} ${FR24FEED_AMD_HASH} && \
     apt-get clean && \
