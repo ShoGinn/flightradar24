@@ -5,9 +5,6 @@ if [[ $# -eq 0 ]] ; then
     echo 'No Arguments'
     exit 1
 fi
-#Usually set from the outside
-DOCKER_ARCH_ACTUAL="$(docker version -f '{{.Server.Arch}}')"
-: ${DOCKER_ARCH:="$DOCKER_ARCH_ACTUAL"}
 
 if [[ $DOCKER_ARCH =~ arm ]] ; then
 	echo "Download armhf version"
