@@ -23,22 +23,22 @@ RUN apt-get update \
 	apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN if [ ${ARCH} = "arm" -o ${ARCH} = "arm64" -o ${ARCH} = "aarch64" ]; then \
-		echo "Download armhf version" && \
-		curl --output fr24feed.tgz "http://repo.feed.flightradar24.com/rpi_binaries/fr24feed_${FR24FEED_ARM_VERSION}_armhf.tgz" && \
-	    sha256sum fr24feed.tgz && echo "${FR24FEED_ARM_HASH}  fr24feed.tgz" | sha256sum -c && \
-	    tar -xvf fr24feed.tgz --strip-components=1 fr24feed_armhf/fr24feed && \
-	    mv fr24feed /usr/bin/fr24feed && \
-	    rm fr24feed.tgz \
-	;fi
-
-RUN	if [ ${ARCH} = "amd64" ]; then \
-		echo "Download AMD64 version" && \
-		curl --output fr24feed.tgz "https://repo-feed.flightradar24.com/linux_x86_64_binaries/fr24feed_${FR24FEED_AMD_VERSION}_amd64.tgz" && \
-		sha256sum fr24feed.tgz && echo "${FR24FEED_AMD_HASH}  fr24feed.tgz" | sha256sum -c && \
-		tar -xvf fr24feed.tgz --strip-components=1 fr24feed_amd64/fr24feed && \
-	    mv fr24feed /usr/bin/fr24feed && \
-	    rm fr24feed.tgz \
+RUN set -ex; \
+	if [ ${ARCH} = "arm" -o ${ARCH} = "arm64" -o ${ARCH} = "aarch64" ]; then \
+		echo "Download armhf version";\
+		curl --output fr24feed.tgz "http://repo.feed.flightradar24.com/rpi_binaries/fr24feed_${FR24FEED_ARM_VERSION}_armhf.tgz"; \
+	    sha256sum fr24feed.tgz && echo "${FR24FEED_ARM_HASH}  fr24feed.tgz" | sha256sum -c ; \
+	    tar -xvf fr24feed.tgz --strip-components=1 fr24feed_armhf/fr24feed ; \
+	    mv fr24feed /usr/bin/fr24feed ; \
+	    rm fr24feed.tgz ; \
+	;fi \
+    if [ ${ARCH} = "amd64" ]; then \
+		echo "Download AMD64 version" ; \
+		curl --output fr24feed.tgz "https://repo-feed.flightradar24.com/linux_x86_64_binaries/fr24feed_${FR24FEED_AMD_VERSION}_amd64.tgz" ; \
+		sha256sum fr24feed.tgz && echo "${FR24FEED_AMD_HASH}  fr24feed.tgz" | sha256sum -c ; \
+		tar -xvf fr24feed.tgz --strip-components=1 fr24feed_amd64/fr24feed ; \
+	    mv fr24feed /usr/bin/fr24feed ; \
+	    rm fr24feed.tgz ; \
 	;fi
 
 # https://feed.flightradar24.com/fr24feed-manual.pdf
