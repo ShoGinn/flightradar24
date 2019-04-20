@@ -14,13 +14,32 @@ ARG FR24FEED_AMD_HASH=770e86b640bcbb8850df67aaa8072a85ac941e2e2f79ea25ef44d67e89
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates iputils-ping dnsutils
-
-COPY fr24dl.sh /usr/bin/fr24dl.sh
-
-RUN fr24dl.sh ${FR24FEED_ARM_VERSION} ${FR24FEED_ARM_HASH} ${FR24FEED_AMD_VERSION} ${FR24FEED_AMD_HASH} && \
-    apt-get clean && \
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+	curl \
+	ca-certificates \
+	iputils-ping \
+	dnsutils && \
+	apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+RUN if [ ${ARCH} = "arm" -o ${ARCH} = "arm64" ]; then \
+		echo "Download armhf version" && \
+		curl --output fr24feed.tgz "http://repo.feed.flightradar24.com/rpi_binaries/fr24feed_${FR24FEED_ARM_VERSION}_armhf.tgz" && \
+	    sha256sum fr24feed.tgz && echo "${FR24FEED_ARM_HASH}  fr24feed.tgz" | sha256sum -c && \
+	    tar -xvf fr24feed.tgz --strip-components=1 fr24feed_armhf/fr24feed && \
+	    mv fr24feed /usr/bin/fr24feed && \
+	    rm fr24feed.tgz \
+	;fi
+
+RUN	if [ ${ARCH} = "amd64" ]; then \
+		echo "Download AMD64 version" && \
+		curl --output fr24feed.tgz "https://repo-feed.flightradar24.com/linux_x86_64_binaries/fr24feed_${FR24FEED_AMD_VERSION}_amd64.tgz" && \
+		sha256sum fr24feed.tgz && echo "${FR24FEED_AMD_HASH}  fr24feed.tgz" | sha256sum -c && \
+		tar -xvf fr24feed.tgz --strip-components=1 fr24feed_amd64/fr24feed && \
+	    mv fr24feed /usr/bin/fr24feed && \
+	    rm fr24feed.tgz \
+	;fi
 
 # https://feed.flightradar24.com/fr24feed-manual.pdf
 COPY fr24feed.ini /etc/fr24feed.ini
