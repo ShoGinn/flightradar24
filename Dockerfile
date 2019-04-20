@@ -23,7 +23,7 @@ RUN apt-get update \
 	apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN if [ ${ARCH} = "arm" -o ${ARCH} = "arm64" ]; then \
+RUN if [ ${ARCH} = "arm" -o ${ARCH} = "arm64" -o ${ARCH} = "aarch64" ]; then \
 		echo "Download armhf version" && \
 		curl --output fr24feed.tgz "http://repo.feed.flightradar24.com/rpi_binaries/fr24feed_${FR24FEED_ARM_VERSION}_armhf.tgz" && \
 	    sha256sum fr24feed.tgz && echo "${FR24FEED_ARM_HASH}  fr24feed.tgz" | sha256sum -c && \
