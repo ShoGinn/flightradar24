@@ -31,7 +31,7 @@ RUN set -ex; \
 	    tar -xvf fr24feed.tgz --strip-components=1 fr24feed_armhf/fr24feed ; \
 	    mv fr24feed /usr/bin/fr24feed ; \
 	    rm fr24feed.tgz ; \
-	;fi \
+	fi; \
     if [ ${ARCH} = "amd64" ]; then \
 		echo "Download AMD64 version" ; \
 		curl --output fr24feed.tgz "https://repo-feed.flightradar24.com/linux_x86_64_binaries/fr24feed_${FR24FEED_AMD_VERSION}_amd64.tgz" ; \
@@ -39,7 +39,7 @@ RUN set -ex; \
 		tar -xvf fr24feed.tgz --strip-components=1 fr24feed_amd64/fr24feed ; \
 	    mv fr24feed /usr/bin/fr24feed ; \
 	    rm fr24feed.tgz ; \
-	;fi
+	fi;
 
 # https://feed.flightradar24.com/fr24feed-manual.pdf
 COPY fr24feed.ini /etc/fr24feed.ini
