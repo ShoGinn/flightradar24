@@ -21,7 +21,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 	curl \
-	ca-certificates \
+	ca-certificates
 
 RUN set -ex; \
 	if [ ${TARGETARCH} = "arm" -o ${TARGETARCH} = "arm64" ]; then \
