@@ -51,8 +51,6 @@ COPY fr24feed-runner.sh /usr/bin/fr24feed-runner
 
 EXPOSE 8754/tcp
 
-HEALTHCHECK --start-period=1m --interval=30s --timeout=5s --retries=3 CMD curl --fail http://localhost:8754/ || exit 1
-
 ENTRYPOINT ["fr24feed-runner"]
 
 # Metadata
