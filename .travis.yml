@@ -12,10 +12,6 @@ addons:
     packages:
       - docker-ce
 
-# Only clone the most recent commit.
-git:
-  depth: 1
-
 # install qemu-user before running docker build
 before_install:
   - |
