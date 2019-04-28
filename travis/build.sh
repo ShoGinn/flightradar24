@@ -9,10 +9,9 @@ set -ex
 test -e ${CONFIG_FILE} && . ${CONFIG_FILE}
 
 
-architectures="arm arm64 amd64"
-platforms=""
+: ${ARCHITECTURES:="arm arm64 amd64"}
 
-for arch in $architectures
+for arch in $ARCHITECTURES
 do
 # Build for all architectures and push manifest
   platforms="linux/$arch,$platforms"
@@ -33,10 +32,16 @@ buildctl build --frontend dockerfile.v0 \
       --opt platform=$platforms \
       --opt "build-arg:BASE=$BASE" \
       --opt "build-arg:VCS_REF=$(git rev-parse --short HEAD)" \
+      --opt "build-arg:VCS_URL=$(git config --get remote.origin.url)" \
+      --opt "build-arg:BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+      --opt "build-arg:MAINTAINER=$MAINTAINER" \
+      --opt "build-arg:NAME=$NAME" \
+      --opt "build-arg:DESCRIPTION=$DESCRIPTION" \
+      --opt "build-arg:URL=$URL" \
       --opt filename=./Dockerfile.cross
 
 # Push image for every arch with arch prefix in tag
-for arch in $architectures
+for arch in $ARCHITECTURES
 do
 # Build for all architectures and push manifest
   buildctl build --frontend dockerfile.v0 \
@@ -46,6 +51,12 @@ do
       --opt platform=linux/$arch \
       --opt "build-arg:BASE=$BASE" \
       --opt "build-arg:VCS_REF=$(git rev-parse --short HEAD)" \
+      --opt "build-arg:VCS_URL=$(git config --get remote.origin.url)" \
+      --opt "build-arg:BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+      --opt "build-arg:MAINTAINER=$MAINTAINER" \
+      --opt "build-arg:NAME=$NAME" \
+      --opt "build-arg:DESCRIPTION=$DESCRIPTION" \
+      --opt "build-arg:URL=$URL" \
       --opt filename=./Dockerfile.cross &
 done
 
