@@ -11,7 +11,7 @@ echo "Waiting for dump1090 to start up"
 sleep 5s
 
 echo "Creating the base ini file"
-cat <<- EOF >> /etc/fr24feed.ini
+cat <<- EOF > /etc/fr24feed.ini
 receiver="beast-tcp"
 host="dump1090:30005"
 
