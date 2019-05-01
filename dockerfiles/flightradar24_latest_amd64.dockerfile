@@ -1,5 +1,4 @@
-ARG BASE
-FROM $BASE AS base
+FROM debian:stretch-slim AS base
 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
@@ -43,30 +42,10 @@ RUN set -ex; \
 
 FROM base
 
-COPY --from=builder /usr/bin/fr24feed /usr/bin/fr24feed
+COPY rootfs /
 
-# https://feed.flightradar24.com/fr24feed-manual.pdf
-COPY fr24feed.ini /etc/fr24feed.ini
-COPY fr24feed-runner.sh /usr/bin/fr24feed-runner
+COPY --from=builder /usr/bin/fr24feed /usr/bin/fr24feed
 
 EXPOSE 8754/tcp
 
-ENTRYPOINT ["fr24feed-runner"]
-
-# Metadata
-ARG MAINTAINER
-ARG NAME
-ARG DESCRIPTION
-ARG URL
-ARG BUILD_DATE
-ARG VCS_URL
-ARG VCS_REF
-
-LABEL maintainer="${MAINTAINER}" \
-  org.label-schema.build-date="${BUILD_DATE}" \
-  org.label-schema.name="${NAME}" \
-  org.label-schema.description="${DESCRIPTION}" \
-  org.label-schema.url="${URL}" \
-  org.label-schema.vcs-ref="${VCS_REF}" \
-  org.label-schema.vcs-url="${VCS_URL}" \
-  org.label-schema.schema-version="1.0"
+ENTRYPOINT ["/usr/local/bin/docker_entrypoint.sh"]

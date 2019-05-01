@@ -1,34 +1,57 @@
-# sudo required for docker
-sudo: true
 dist: xenial
+group: travis_latest
+
+if: |
+  branch = master AND ! commit_message =~ /README.md/ AND ! commit_message =~ /docker-compose.yml/
+  OR type = cron
 
 language: bash
+sudo: required
 
 services:
   - docker
 
-addons:
-  apt:
-    packages:
-      - docker-ce
+env:
+  global:
+    - BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    - BUILD_NUMBER="${TRAVIS_BUILD_NUMBER}"
+    - DOCKER_DESCRIPTION="Docker container for ADS-B - This is the flightradar24.com component"
+    - DOCKER_MAINTAINER="shoginn"
+    - DOCKER_NAME="flightradar24"
+    - DOCKER_URL="https://shoginn.github.io"
+    - SCHEMA_VERSION="1.0"
+    - VCS_REF="$(git rev-parse --short HEAD)"
+    - VCS_URL="$(git remote get-url origin | head -c-5)"
 
-# install qemu-user before running docker build
+  matrix:
+    - DOCKER_TAG="latest"
+
 before_install:
-  - sudo docker run --privileged linuxkit/binfmt:v0.6
-  - sudo docker run -d --privileged -p 1234:1234 --name buildkit moby/buildkit:latest --addr tcp://0.0.0.0:1234 --oci-worker-platform linux/amd64 --oci-worker-platform linux/armhf --oci-worker-platform linux/arm64
+  - sudo /sbin/sysctl -w net.ipv4.conf.all.forwarding=1
+  - mkdir -p ./travis
+  - curl -ksSl -o ./travis/docker.sh "https://raw.githubusercontent.com/ShoGinn/docker-builds/master/travis/docker.sh"
+  - sudo bash travis/docker.sh
+  - sudo docker version
+
+install:
+  - sudo docker run --privileged linuxkit/binfmt:v0.7
+  - sudo docker run --privileged -d -p 1234:1234 --name buildkit moby/buildkit:latest --addr tcp://0.0.0.0:1234 --oci-worker-platform linux/arm --oci-worker-platform linux/armhf --oci-worker-platform linux/arm64 --oci-worker-platform linux/amd64
   - sudo docker cp buildkit:/usr/bin/buildctl /usr/bin/
   - export BUILDKIT_HOST=tcp://0.0.0.0:1234
 
+before_script:
+  - sed -i -e '/^$/d' -e 's/^[ \t]*//' -e '/^#/d' dockerfiles/*
+  - chmod 0544 rootfs/usr/local/bin/docker_entrypoint.sh
+  - curl -ksSl -o ./travis/build.sh "https://raw.githubusercontent.com/ShoGinn/docker-builds/master/travis/build.sh"
+  - curl -ksSl -o ./travis/deploy.sh "https://raw.githubusercontent.com/ShoGinn/docker-builds/master/travis/deploy.sh"
+
 script:
-  - bash ./travis/build.sh test-build
+  - sudo bash travis/build.sh
+  - sudo bash travis/deploy.sh
 
-deploy:
-  provider: script
-  script: bash ./travis/build.sh latest
-  skip_cleanup: true
-  on:
-    tags: true
+after_success:
 
-# Don't email me the results of the test runs.
 notifications:
-  email: false
+  email:
+    on_success: never
+    on_failure: change
