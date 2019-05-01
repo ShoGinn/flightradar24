@@ -7,7 +7,7 @@ RUN apt-get update \
 	apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-FROM --platform=$TARGETPLATFORM $BASE as builder
+FROM --platform=$TARGETPLATFORM debian:stretch-slim as builder
 
 ARG TARGETARCH
 ARG FR24FEED_ARM_VERSION=1.0.23-8
