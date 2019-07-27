@@ -6,6 +6,8 @@ set -o nounset          # Disallow expansion of unset variables
 #set -o pipefail         # Use last non-zero exit code in a pipeline
 #set -o xtrace          # Trace the execution of the script (debug)
 
+DUMP1090_SERVER=${DUMP1090_SERVER:=dump1090}
+DUMP1090_PORT=${DUMP1090_PORT:=30005}
 
 echo "Waiting for dump1090 to start up"
 sleep 5s
@@ -13,7 +15,7 @@ sleep 5s
 echo "Creating the base ini file"
 cat <<- EOF > /etc/fr24feed.ini
 receiver="beast-tcp"
-host="dump1090:30005"
+host="${DUMP1090_SERVER}:${DUMP1090_PORT}"
 
 bs="no"
 raw="no"
