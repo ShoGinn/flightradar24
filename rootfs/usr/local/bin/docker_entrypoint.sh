@@ -19,13 +19,13 @@ host="${DUMP1090_SERVER}:${DUMP1090_PORT}"
 
 bs="no"
 raw="no"
-
 logmode="0"
-
-bind-interface="0.0.0.0"
-
+windowmode="0"
+mpx="no"
 mlat="yes"
 mlat-without-gps="yes"
+use-http=yes
+http-timeout=20
 EOF
 
 # https://forum.flightradar24.com/threads/11943-Problems-with-feeder-statistics-and-data-sharing
