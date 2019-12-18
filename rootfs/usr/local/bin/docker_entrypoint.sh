@@ -8,6 +8,8 @@ set -o nounset          # Disallow expansion of unset variables
 
 DUMP1090_SERVER=${DUMP1090_SERVER:=dump1090}
 DUMP1090_PORT=${DUMP1090_PORT:=30005}
+MLAT=${MLAT:=yes}
+MLAT_WITHOUT_GPS=${MLAT_WITHOUT_GPS:=yes}
 
 echo "Waiting for dump1090 to start up"
 sleep 5s
@@ -22,8 +24,8 @@ raw="no"
 logmode="0"
 windowmode="0"
 mpx="no"
-mlat="yes"
-mlat-without-gps="yes"
+mlat="${MLAT}"
+mlat-without-gps="${MLAT_WITHOUT_GPS}"
 use-http=yes
 http-timeout=20
 EOF
