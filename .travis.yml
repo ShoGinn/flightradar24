@@ -1,3 +1,4 @@
+os: linux
 dist: xenial
 group: travis_latest
 
@@ -5,8 +6,7 @@ if: |
   branch = master AND ! commit_message =~ /README.md/ AND ! commit_message =~ /docker-compose.yml/
   OR type = cron
 
-language: bash
-sudo: required
+language: shell
 
 services:
   - docker
@@ -23,7 +23,7 @@ env:
     - VCS_REF="$(git rev-parse --short HEAD)"
     - VCS_URL="$(git remote get-url origin | head -c-5)"
 
-  matrix:
+  jobs:
     - DOCKER_TAG="latest"
 
 before_install:
@@ -32,12 +32,6 @@ before_install:
   - curl -ksSl -o ./travis/docker.sh "https://raw.githubusercontent.com/ShoGinn/docker-builds/master/travis/docker.sh"
   - sudo bash travis/docker.sh
   - sudo docker version
-
-install:
-  - sudo docker run --privileged linuxkit/binfmt:v0.7
-  - sudo docker run --privileged -d -p 1234:1234 --name buildkit moby/buildkit:latest --addr tcp://0.0.0.0:1234 --oci-worker-platform linux/arm --oci-worker-platform linux/armhf --oci-worker-platform linux/arm64 --oci-worker-platform linux/amd64
-  - sudo docker cp buildkit:/usr/bin/buildctl /usr/bin/
-  - export BUILDKIT_HOST=tcp://0.0.0.0:1234
 
 before_script:
   - sed -i -e '/^$/d' -e 's/^[ \t]*//' -e '/^#/d' dockerfiles/*
