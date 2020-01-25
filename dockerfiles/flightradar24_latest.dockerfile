@@ -23,7 +23,7 @@ RUN apt-get update \
 	ca-certificates
 
 RUN set -ex; \
-	if [ ${TARGETARCH} != "linux/amd64" ]; then \
+	if [ ${TARGETARCH} != "amd64" ]; then \
 		echo "Download armhf version";\
 		curl --output fr24feed.tgz "http://repo.feed.flightradar24.com/rpi_binaries/fr24feed_${FR24FEED_ARM_VERSION}_armhf.tgz"; \
 	    sha256sum fr24feed.tgz && echo "${FR24FEED_ARM_HASH}  fr24feed.tgz" | sha256sum -c ; \
