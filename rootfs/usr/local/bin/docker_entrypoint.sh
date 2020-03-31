@@ -10,6 +10,7 @@ DUMP1090_SERVER=${DUMP1090_SERVER:=dump1090}
 DUMP1090_PORT=${DUMP1090_PORT:=30005}
 MLAT=${MLAT:=yes}
 MLAT_WITHOUT_GPS=${MLAT_WITHOUT_GPS:=yes}
+MPX=${MPX:=no}
 
 echo "Waiting for dump1090 to start up"
 sleep 5s
@@ -23,7 +24,7 @@ bs="no"
 raw="no"
 logmode="0"
 windowmode="0"
-mpx="no"
+mpx="${MPX}"
 mlat="${MLAT}"
 mlat-without-gps="${MLAT_WITHOUT_GPS}"
 use-http=yes

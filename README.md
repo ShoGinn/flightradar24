@@ -24,6 +24,7 @@ Env variables must be passed to the container containing the flightradar24 requi
 * DUMP1090_PORT=30005 -- default port (configurable)
 * MLAT==yes (configurable)
 * MLAT_WITHOUT_GPS=yes (configurable)
+* MPX=no (configurable)
 
 * Port 8754/tcp is exposed to show you the status of flightradar (web ui)
 
